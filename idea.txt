@@ -1,0 +1,43 @@
+KangrokEngine
+
+Graphic & Game engine made in Python with Pygame
+
+Features:
+Platform and Top Down games
+User Interfaces
+
+
+Ideas for usage:
+Platform AI tests
+Top Down game with AI
+
+
+Difficulties:
+Time?
+Threading
+Python?
+Server and Client networking
+
+example usage:
+import KangrokEngine
+
+class Platformer(KangrokEngine.World):
+    def __init__(self):
+        self.floor = KangrokEngine.platform.Floor(color="GREEN", x=0, y=0)
+
+        # or
+        #self.map = KangrokEngine.platform.import_map("map.dat")
+
+        self.player = KangrokEngine.platform.Player()
+
+        self.keybind("q", SpawnBlockDown)
+        
+   def SpawnBlockDown():
+        x, y = self.player.getPos()
+        y = y - 2
+        self.SpawnBlock(color="blue", [x, y])
+
+
+App = App(title, icon)
+App.new_scene(id=0, scene=Platformer, default = true)
+App.run()
