@@ -18,15 +18,18 @@ class Text(Widget):
         self.font = pygame.font.SysFont(font, self.size)
         self.color = color
 
+    def update(self, text):
+        self.text = text
+
     def render(self, window):
         for i, l in enumerate(self.text.splitlines()):
             window.blit(self.font.render(l, False, self.color), (self.pos[0], self.pos[1] + self.size * i))
 
 class Button(Widget):
-    def __init__(self, pos, size=(300, 100)):
+    def __init__(self, pos, size=(300, 100), command=None):
         super().__init__(pos)
 
-        self.isPressed = False
+        self.pressed = False
 
         self.toggle = False
 
@@ -39,18 +42,26 @@ class Button(Widget):
 
         self.status = self.idle
 
-    def function(self, function):
-        pass
+        self.function = command
 
     def process(self, cursor):
         if cursor.rect.colliderect(self.rect):
-            self.status = self.selected
-            if cursor.left_click:
-                self.isPressed = True
-                self.status = self.active
-                print("sex")
+            if not self.pressed:
+                self.status = self.selected
+
+                if cursor.left_click:
+                    self.pressed = True
+                    self.status = self.active
+                    if self.function != None:
+                        self.function()
+
+            elif cursor.left_click:
+                self.pressed = False
+                self.status = self.selected
         else:
-            self.status = self.idle
+            if not self.pressed:
+                self.status = self.idle
+
 
 
     def render(self, window):

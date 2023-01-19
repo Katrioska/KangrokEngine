@@ -45,11 +45,10 @@ class App:
 class _Cursor:
     def __init__(self):
         self.isVisible = True
+        self.rect = pygame.Rect(0, 0, 4, 4)
         self.left_click = False
         self.right_click = False
         self.middle_click = False
-
-        self.rect = pygame.Rect(0, 0, 4, 4)
 
     def process(self):
         pos = pygame.mouse.get_pos()
@@ -68,8 +67,8 @@ class Scene:
         self.window = window
         self.active_scene = active_scene
 
-
         self.cursor = _Cursor()
+        self.__hasMouseEvent = False
 
         self.___imgPaths = {}
         self.loaded = False
@@ -80,6 +79,9 @@ class Scene:
         self.background_color = pygame.Color("black")
 
     def __keyManager(self):
+        if self.__hasMouseEvent:
+            self.__hasMouseEvent = False
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
@@ -89,7 +91,26 @@ class Scene:
                 if event.key in self.__keys:
                     self.__keys[event.key]()
 
-                if event.key == pygame.MOUSE
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                button = event.button
+                self.__hasMouseEvent = True
+
+                if button == 1:
+                    self.cursor.left_click = True
+                    self.on_left_click()
+
+        if not self.__hasMouseEvent:
+            self.cursor.left_click = False
+
+    def on_left_click(self):
+        pass
+        #print("TEST")
+
+    def on_right_click(self):
+        pass
+
+    def on_middle_click(self):
+        pass
 
     def __widgetsManager(self, window):
         for widget in self.__widgets:
@@ -101,6 +122,9 @@ class Scene:
         pass
 
     def processManager(self):
+        """
+        This will be executed every time.
+        """
         pass
 
     def renderManager(self):
