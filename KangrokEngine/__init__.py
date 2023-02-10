@@ -1,5 +1,7 @@
 __author__ = "Katrioska"
 
+import time
+
 from KangrokEngine.Widgets import Widget, Button
 
 import pygame
@@ -13,6 +15,7 @@ class App:
         self.isRunning = True
 
         self.fps = fps
+        self.actual_fps = 0
 
         self.scenes = {}
         self.default_scene_id = None
@@ -23,8 +26,10 @@ class App:
             self.active_scene = self.default_scene_id
 
         while self.isRunning:
-            self.clock.tick(self.fps)
-            self.scenes[self.active_scene].run()
+            dt = self.clock.tick(self.fps)/1000
+            self.actual_fps = round(self.clock.get_fps(), 1)
+            self.scenes[self.active_scene].actual_fps = self.actual_fps
+            self.scenes[self.active_scene].run(dt)
 
             if self.active_scene != self.scenes[self.active_scene].active_scene:
                 self.active_scene = self.scenes[self.active_scene].active_scene
@@ -72,6 +77,9 @@ class Scene:
 
         self.___imgPaths = {}
         self.loaded = False
+
+        self.delay = 0
+        self.actual_fps = 0
 
         self.__keys = {}
         self.__widgets = []
@@ -121,16 +129,16 @@ class Scene:
     def eventManager(self):
         pass
 
-    def processManager(self):
+    def processManager(self, dt):
         """
         This will be executed every time.
         """
         pass
 
-    def renderManager(self):
+    def renderManager(self, window):
         pass
 
-    def run(self):
+    def run(self, dt):
         if not self.loaded:
             for name, image in self. ___imgPaths.items():
                 self.___imgPaths[name] = pygame.image.load(image)
@@ -138,20 +146,24 @@ class Scene:
 
         self.pause = False
         if not self.pause:
+            start = time.time()
             self.cursor.process()
             self.__keyManager()
             self.eventManager()
-            self.processManager()
+            self.processManager(dt)
 
             if self.background_color != None:
                 self.window.fill(self.background_color)
             else:
                 self.window.blit(self.___imgPaths["BGimg"], (0, 0))
 
-            self.renderManager()
+            self.renderManager(self.window)
             self.__widgetsManager(self.window)
             self.cursor.render(self.window)
             pygame.display.flip()
+
+            end = time.time()
+            self.delay = end - start
 
     def keybind(self, key, function):
         self.__keys[key] = function
