@@ -12,7 +12,7 @@ class Bullet:
         self.damage = damage
         self.id = id
         self.shooter = shooter
-        self.time = 75
+        self.time = 50
         self.actual_time = 0
         self.color = (200, 200, 200)
         self.rect = pygame.Rect(self.pos[0], self.pos[1], 2, 2)

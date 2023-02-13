@@ -15,11 +15,14 @@ class GameScene(Scene):
         self.add(self.info)
 
     def processManager(self, dt):
-        teams = self.world.process(dt, self.window)
+        self.world.process(dt, self.window)
 
         info = f"ACTUAL FPS: {self.actual_fps}\n\n" \
-               f"Delay: {self.delay}\n\n"
-        for team in teams:
+               f"Delay: {self.delay}\n\n" \
+               f"STEPS: {self.world.actual_steps}\n" \
+               f"GENERATIONS: {self.world.generations}\n\n"
+
+        for team in self.world.teams:
             info += f"TEAM {team.team_id} - SCORE {team.score}\n" \
                     f"TEAM {team.team_id} - UNITS {team.units}\n\n"
 
@@ -30,6 +33,6 @@ class GameScene(Scene):
 
 if __name__ == "__main__":
     MyApp = App("WarIA_2D Test", size)
-    MyApp.fps = 120
+    MyApp.fps = 60
     MyApp.new_scene(id=0, scene=GameScene, default=True)
     MyApp.run()

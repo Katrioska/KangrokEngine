@@ -92,6 +92,7 @@ class Scene:
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                self.on_exit()
                 pygame.quit()
                 exit()
 
@@ -118,6 +119,9 @@ class Scene:
         pass
 
     def on_middle_click(self):
+        pass
+
+    def on_exit(self):
         pass
 
     def __widgetsManager(self, window):

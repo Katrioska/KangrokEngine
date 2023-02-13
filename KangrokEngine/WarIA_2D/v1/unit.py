@@ -1,7 +1,9 @@
 import pygame
 import random
 import math
+
 from KangrokEngine.WarIA_2D.v1.bullet import Bullet
+from KangrokEngine.WarIA_2D.v1.NeuralNetwork import UnitV1_NN
 from ..constvars import *
 
 class Unit:
@@ -13,6 +15,8 @@ class Unit:
         self.team_color = team_color
         self.speed = 10 #5
         self.angle = random.uniform(-90, 90)
+        self.view_distance = 10
+        self.view_count = 4
 
         self.attack_range = 10
         self.attack_speed = 40
@@ -21,7 +25,15 @@ class Unit:
         self.hasShoot = False
         self.hp = 100
 
-        #self.brain = UnitV1_NN()
+        self.brain = UnitV1_NN()
+
+        self.oscilator = 0
+        self.oscilator1 = 0
+        self.oscilator2 = 0
+
+
+        self.distance = 0
+        self.kills = 0
 
         self.rect = pygame.Rect(self.pos[0]*g_w, self.pos[1]*g_w, 10, 10)
 
@@ -30,7 +42,33 @@ class Unit:
             projectiles.append(Bullet(self.angle, [self.rect.centerx, self.rect.centery], self.teamid, self))
             self.hasShoot = True
 
-    def process(self, dt, window, projectiles):
+    def process(self, dt, window, projectiles, closest, size):
+        self.oscilator += 1
+        if self.oscilator >= 32:
+            self.oscilator = 0
+
+        self.oscilator1 += 1
+        if self.oscilator1 >= 64:
+            self.oscilator1 = 0
+
+        self.oscilator2 += 1
+        if self.oscilator2 >= 128:
+            self.oscilator2 = 0
+
+        while len(closest) < self.view_count:
+            closest.append([0, 0, 0])
+
+        bordertop = self.rect.centery
+        borderdown = size[1] - self.rect.centery
+        borderleft = self.rect.centerx
+        borderright = size[0] - self.rect.centerx
+        actions = self.brain.think(self.pos[0], self.pos[1], self.angle, self.oscilator, closest, bordertop, borderdown, borderleft, borderright, self.oscilator1, self.oscilator2, self.team.score)
+
+        movement_factor = actions[0] * 50
+        self.angle += actions[1] / 8
+
+        if actions[2] > 0.5:
+            self.shot(projectiles)
 
         if self.hasShoot:
             if self.attack_reload >= self.attack_speed:
@@ -38,15 +76,15 @@ class Unit:
                 self.attack_reload = 0
             else:
                 self.attack_reload += 1
-        self.shot(projectiles)
 
-        #actions = self.brain.predict([[self.pos[0], self.pos[1], self.angle]], verbose=False)
-        #self.angle += actions[1][0][0]
-
-        self.angle += random.uniform(-0.25, 0.25)
+        #self.angle += random.uniform(-0.25, 0.25)
 
         x = self.speed * math.cos(self.angle) * movement_factor * dt #* actions[0][0][0]
         y = self.speed * math.sin(self.angle) * movement_factor * dt #* actions[0][0][0]
+
+        self.distance += abs(sum([x, y]))
+
+        #print(self.oscilator, actions, [x, y])
 
         self.rect.move_ip(x,y)
         self.rect.clamp_ip(window.get_rect())
