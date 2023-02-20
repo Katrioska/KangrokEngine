@@ -2,9 +2,9 @@ import pygame
 import random
 import math
 
-from KangrokEngine.WarIA_2D.v1.bullet import Bullet
-from KangrokEngine.WarIA_2D.v1.NeuralNetwork import UnitV1_NN
-from ..constvars import *
+from tests.WarIA_2D.v1.bullet import Bullet
+from tests.WarIA_2D.v1.NeuralNetwork import UnitV1_NN
+from tests.WarIA_2D.v1.constvars import *
 
 class Unit:
     def __init__(self, pos, team, teamid, color = (255, 0, 0), team_color = (128, 0, 0)):
@@ -82,7 +82,7 @@ class Unit:
         x = self.speed * math.cos(self.angle) * movement_factor * dt #* actions[0][0][0]
         y = self.speed * math.sin(self.angle) * movement_factor * dt #* actions[0][0][0]
 
-        self.distance += abs(sum([x, y]))
+        self.distance += abs(sum([x, y]) * self.angle/10)
 
         #print(self.oscilator, actions, [x, y])
 

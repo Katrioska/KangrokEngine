@@ -1,8 +1,6 @@
 import math
 import pygame
 
-from ..constvars import *
-
 
 class Bullet:
     def __init__(self, angle, startpos, id, shooter, speed=300, size = 3, damage=25):

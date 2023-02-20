@@ -66,7 +66,7 @@ class UnitV1_NN:
         hidden_layer_sums = []
 
         for i in hidden_layer_weights:
-            hidden_layer_sums.append(sum(i)) # aqui se podria aplicar una funcion de activacion
+            hidden_layer_sums.append(np.tanh(sum(i))) # aqui se podria aplicar una funcion de activacion
 
         #print(hidden_layer_sums)
         #print(len(hidden_layer_sums))

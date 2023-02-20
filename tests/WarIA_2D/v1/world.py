@@ -5,12 +5,22 @@ import random
 
 import pygame
 
-from ..constvars import *
-from KangrokEngine.WarIA_2D.v1.team import Team
-from KangrokEngine.WarIA_2D.v1.terrain import Terrain
-from KangrokEngine.WarIA_2D.v1.unit import Unit
+from tests.WarIA_2D.v1.constvars import *
+from tests.WarIA_2D.v1.team import Team
+from tests.WarIA_2D.v1.terrain import Terrain
+from tests.WarIA_2D.v1.unit import Unit
 
-MUTATION = 0.01
+MUTATION = 0.005
+MIX = 0.25
+
+def mix(weight_a, weight_b):
+    new_weights = []
+    for anidado_a, anidado_b in zip(weight_a, weight_b):
+        new = []
+        for i, j in zip(anidado_a, anidado_b):
+            new.append(i + j * MIX)
+        new_weights.append(new)
+    weight_a = new_weights
 
 def mutate(weights):
     new_weights = []
@@ -28,7 +38,7 @@ class World:
         self.projectiles = []
 
         self.generations = 0
-        self.steps = 641
+        self.steps = 128*10 + 1
         self.actual_steps = 0
 
         self.a_start_pos = [10, 40]
@@ -99,7 +109,6 @@ class World:
                 if unit.teamid == winner_team.team_id:
                     winner_units.append(unit)
 
-            self.teams = []
             self.units = []
 
             print(winner_team.team_id, len(winner_units))
@@ -114,6 +123,13 @@ class World:
             self.teams = [Team(self.a_start_pos, "A", (200, 100, 100), (128, 0, 0), self),  # ],
                           Team(self.b_start_pos, "B", (100, 100, 200), (0, 0, 128), self)]
 
+
+            for i in real_winners:
+                for j in real_winners:
+                    if i != j:
+                        mix(i.brain.weights_input, j.brain.weights_input)
+                        mix(i.brain.weights_hidden, j.brain.weights_hidden)
+                        mix(i.brain.weights_output, j.brain.weights_output)
 
             print(winner_units[0].brain.weights_input)
 

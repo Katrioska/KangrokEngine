@@ -4,7 +4,7 @@ from KangrokEngine import App
 from KangrokEngine import Scene
 from KangrokEngine.Widgets import Text
 
-from KangrokEngine.WarIA_2D.v1.world import World
+from tests.WarIA_2D.v1.world import World
 
 class GameScene(Scene):
     def __init__(self, window, active_scene):

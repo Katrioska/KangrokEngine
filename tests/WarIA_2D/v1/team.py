@@ -1,5 +1,5 @@
-from KangrokEngine.WarIA_2D.v1.unit import Unit
-import random
+from tests.WarIA_2D.v1.unit import Unit
+
 
 class Team:
     def __init__(self, pos, team_id, unit_color, team_color, world, units = 20):
